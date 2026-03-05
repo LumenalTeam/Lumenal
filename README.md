@@ -20,11 +20,12 @@ git clone https://github.com/LumenalTeam/Lumenal.git https://github.com/LumenalT
 3.Run the tool:
 * python LUMENAL.py```
 
-  Disclaimer:
-This tool is for educational and ethical security testing purposes only.The developer is not responsible for any misuse or damage caused by this program.Use it responsibly
+ ### Disclaimer:
+This tool is for educational and ethical security testing purposes only.The developer is not responsible for any misuse or damage caused by this program.Use it responsibly```
 
 
 Developed by LumenalTeam
+
 
 
 
