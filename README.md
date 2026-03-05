@@ -11,8 +11,8 @@ Lumenal is a high-speed, asynchronous tool designed for OSINT (Open Source Intel
 ## 🛠 Installation & Usage
 
 1. Clone the repository:
-   `bash
-   git clone https://github.com/LumenalTeam/Lumenal.git```
+```bash
+git clone [https://github.com/LumenalTeam/Lumenal.git](https://github.com/LumenalTeam/Lumenal.git)```
 2.Install dependencies:
 * pip install -r requirements.txt```
 
@@ -24,4 +24,5 @@ This tool is for educational and ethical security testing purposes only.The deve
 
 
 Developed by LumenalTeam
+
 
