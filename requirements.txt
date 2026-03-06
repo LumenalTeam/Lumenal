@@ -2,5 +2,5 @@ aiohttp
 fake-useragent
 rich
 requests
-
 phonenumbers
+
