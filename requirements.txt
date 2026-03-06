@@ -1,6 +1,6 @@
-Python 3.8+
 aiohttp
 fake-useragent
 rich
 requests
+
 phonenumbers
