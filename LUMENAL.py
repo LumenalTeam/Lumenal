@@ -8,12 +8,24 @@ from rich.text import Text
 from fake_useragent import UserAgent
 from rich.align import Align
 from rich.panel import Panel
-
-# 1. System Initialization
+import webbrowser
+import metadata_engine
+import network_tools
+import requests
+import port_scanner
+from rich.progress import track
 console = Console()
-ua = UserAgent()
+import random
+import phone_lookup
 
-# 2. Target Data Sources
+AGENTS = [
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Mozilla/5.0 (iPhone; CPU iPhone OS 17_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.2 Mobile/15E148 Safari/604.1",
+        "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36"
+    ]
+def get_headers():
+    return {"User-Agent": random.choice(AGENTS)}
+# 1. Target Data Sources
 SITES = [
     # Social & General
     ("VK", "https://vk.com/{}", "404 Not Found"),
@@ -48,6 +60,129 @@ SITES = [
     ("Replit", "https://replit.com/@{}", "404"),
     ("Linktree", "https://linktr.ee/{}", "404")
 ]
+def main_menu():
+    print("\n" + "="*30)
+    print("      LUMENAL OSINT TOOL")
+    print("="*30)
+    print("[1] Nickname Search (Social Media)")
+    print("[2] Email Leack Checker(Data Breaches)")
+    print("[3] Metadata Analyzer (Images)")
+    print("[4] IP Lookup (Geolocation):")
+    print("[5] Port Scanner (Network):")
+    print("[6] Phone Lookup (International):")
+    print("[0] Exit")
+    
+    choice = input("\nSelect an option: ")
+    return choice
+
+def check_leak():
+    email = input("\n[?] Enter email to check: ").strip()
+    
+    if not email:
+        console.print("[bold red][!] You didn't enter anything![/bold red]")
+        return
+
+    console.print(f"[bold yellow][!] Checking databases for: {email}[/bold yellow]")
+    
+    leak_url = f"https://leakcheck.io/search?type=email&check={email}"
+    
+    console.print(Panel(
+        f"[bold green][+] Search link generated successfully.[/bold green]\n"
+        f"[white]Follow this link to see results:[/white]\n"
+        f"[bold cyan]{leak_url}[/bold cyan]",
+        title="Leak Report",
+        expand=False
+    ))
+    
+    try:
+        headers = {"User-Agent": random.choice(AGENTS)}
+        response = requests.get(url, headers=headers, timeout=10)
+        
+        if response.status_code == 200:
+            data = response.json()
+            if data.get("found", 0) > 0:
+                console.print(f"[bold red][!] WARNING: Found in {data['found']} data breaches![/bold red]")
+                console.print("[white]Recommendation: Change your password immediately.[/white]")
+            else:
+                console.print("[bold green][+] No leaks found in public databases.[/bold green]")
+        else:
+            console.print(f"[bold cyan][*] Visit: https://haveibeenpwned.com/unifiedsearch/{email}[/bold cyan]")
+    except:
+        console.print("[red][!] Connection error. Please try again later.[/red]")
+
+def nickname_search():
+    nick = input("\n[?] Enter nickname: ")
+    found_count = 0
+    
+    
+    
+    user_proxy = None 
+    proxies = {"http": user_proxy, "https": user_proxy} if user_proxy else None
+
+    for name, url_template, error_text in track(SITES, description="Scanning..."):
+        url = url_template.format(nick)
+        try:
+            
+            response = requests.get(
+                url, 
+                headers=get_headers(), 
+                proxies=proxies, 
+                timeout=7
+            )
+            
+            if response.status_code == 200 and error_text not in response.text:
+                console.print(f"[bold green][+] Found on {name}:[/bold green] {url}")
+        except Exception:
+            continue
+            
+    console.print(f"\n[bold cyan]Готово! Найдено активных аккаунтов: {found_count}[/bold cyan]")
+
+while True:
+    user_choice = main_menu()
+    
+    if user_choice == '1':
+        nickname_search()
+    elif user_choice == '2':
+        # 1. Получаем ввод
+        email = input("\n[?] Enter email: ").strip()
+        
+        # 2. Создаем переменную (назовем её просто url, чтобы не путаться)
+        url = f"https://intelx.io/?s={email}"
+        
+        # 3. Выводим её. ВАЖНО: имя в {} должно совпадать с именем выше!
+        console.print(Panel(
+            f"[bold green][+] Result for {email}:[/bold green]\n"
+            f"[bold cyan]{url}[/bold cyan]",
+            title="Data Breach Search",
+            expand=False
+        ))
+        
+        # Чтобы меню не улетало сразу вверх
+        input("\nPress Enter to continue...")
+    elif user_choice == '3':
+        path = input("Drag and drop photo to console: ").strip("'\"")
+        metadata_engine.get_exif_data(path)
+    elif user_choice == '4':
+        import network_tools
+        ip_to_check = input("Enter IP for analysis: ")
+        network_tools.get_ip_info(ip_to_check)
+    elif user_choice == '5':
+        import port_scanner
+        target_host = input("Enter domain or IP for scanning: ")
+        port_scanner.scan_ports(target_host)
+    elif user_choice == '6':
+     import phone_lookup
+     phone = input("Enter phonenumber(e.g. +1...): ")
+     result = phone_lookup.lookup(phone)
+     console.print(result)
+    elif user_choice == '0':
+        print("Exiting system...")
+        break
+    else:
+        print("Error! PLease select an option from 0 to 6.")
+
+# 2. System Initialization
+ua = UserAgent()
 
 # 3. Visual Identity
 def clear_and_logo():
